@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>予約フォーム</title>
+</head>
+<body>
+  <h2>予約フォーム</h2>
+  <form action="https://hook.eu2.make.com/g0jzzvagjl1e7cefpn0er1gahsc1pwjo" method="POST">
+    <label for="firstName">
+      氏名: <small>例 山田 太郎</small>
+    </label><br />
+    <input type="text" id="firstName" name="firstName" required /><br /><br />
+
+    <label for="fullName">
+      フルネーム: <small>例 ヤマダ タロウ</small>
+    </label><br />
+    <input type="text" id="fullName" name="fullName" required /><br /><br />
+
+    <label for="phone">
+      電話番号: <small>例 090-1234-5678</small>
+    </label><br />
+    <input type="tel" id="phone" name="phone" pattern="[0-9\-]+" required /><br /><br />
+
+    <!-- userid用のhiddenフィールド -->
+    <input type="hidden" id="userid" name="userid" value="" />
+
+    <button type="submit">送信</button>
+  </form>
+
+  <script>
+    window.onload = function() {
+      const params = new URLSearchParams(window.location.search);
+      const userid = params.get("userid");
+      if (userid) {
+        document.getElementById("userid").value = userid;
+      }
+    };
+  </script>
+</body>
+</html>

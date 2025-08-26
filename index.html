@@ -1,12 +1,47 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
   <meta charset="UTF-8" />
-  <title>予約フォーム</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>お客様情報登録フォーム</title>
+
+	<!-- 以下CSS -->
+	<style>
+	body {
+	  margin: 0;           /* ページ全体の余白をリセット */
+	  padding: 20px;       /* ページ全体に20pxの余白 */
+	  font-family: sans-serif; /* 全体の文字フォント */
+	}
+	
+	form {
+	  max-width: 400px;    /* フォームの横幅の上限を400pxにする */
+	  margin: 0 auto;      /* 左右の余白を自動にして中央寄せ */
+	  padding: 20px;       /* フォーム内の余白 */
+	  border: 1px solid #ddd; /* 薄い枠線 */
+	  border-radius: 10px; /* 角を丸く */
+	  background: #fff;    /* 背景を白 */
+	}
+	
+	input, button {
+	  width: 100%;         /* 横幅を親要素いっぱいに広げる */
+	  padding: 10px;       /* 内側の余白 */
+	  margin-top: 10px;    /* 上に10pxの余白 */
+	  font-size: 16px;     /* 文字の大きさ */
+       	  box-sizing: border-box; /* パディング込みで幅100%に収める */
+	}
+
+	 .page-title {
+	 text-align: center;  /* 中央寄せ */
+         margin-top: 20px;    /* 上余白 */
+         font-size: 24px;     /* 文字サイズ */
+        }
+	
+	</style>
 </head>
 <body>
-  <h2>予約フォーム</h2>
-  <form action="https://hook.eu2.make.com/g0jzzvagjl1e7cefpn0er1gahsc1pwjo" method="POST">
+  <h2 class="page-title">お客様情報登録フォーム</h2>
+  <form action="https://hook.eu2.make.com/m8ax699q4dk75uo84j5nrtu3zfm1x1pj" method="POST">
     <label for="firstName">
       氏名: <small>例 山田 太郎</small>
     </label><br />

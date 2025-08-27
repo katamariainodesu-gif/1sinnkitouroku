@@ -95,19 +95,17 @@ form.addEventListener("submit", async (e) => {
   errorMessage.style.display = "none";
 
   const formData = new FormData(form);
-  const data = {
+  const params = new URLSearchParams({
     userId: formData.get("userId"),
     firstName: formData.get("firstName"),
     fullName: formData.get("fullName"),
     phone: formData.get("phone")
-  };
+  });
 
   try {
-    // 送信結果は無視して完了画面へ
-    await fetch(webhookURL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
+    // URLパラメータ付きGETリクエストで送信
+    await fetch(`${webhookURL}?${params.toString()}`, {
+      method: "GET"
     });
   } catch(err) {
     console.error("送信エラー:", err);

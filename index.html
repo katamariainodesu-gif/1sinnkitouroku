@@ -1,41 +1,125 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <title>予約フォーム</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>お客様情報登録フォーム</title>
+<style>
+  body {
+    margin: 0;
+    padding: 20px;
+    font-family: sans-serif;
+    background-color: #f9f9f9;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .page { display: none; }
+  .active { display: block; }
+  form {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background: #fff;
+  }
+  input, button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    font-size: 16px;
+    box-sizing: border-box;
+  }
+  .page-title { text-align: center; margin-top: 20px; font-size: 24px; color: #0f172a; }
+  #completion-page {
+    display: none;
+    height: 100vh;
+    background-color: #f9f9f9;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 24px;
+    color: #16a34a;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  #error-message { display: none; color: #dc2626; text-align: center; margin-top: 20px; font-weight: bold; }
+</style>
 </head>
 <body>
-  <h2>予約フォーム</h2>
-  <form action="https://hook.eu2.make.com/8anawrwfconzdpic5voda2vcjg2ayjhi" method="POST">
-    <label for="firstName">
-      氏名: <small>例 山田 太郎</small>
-    </label><br />
-    <input type="text" id="firstName" name="firstName" required /><br /><br />
 
-    <label for="fullName">
-      フルネーム: <small>例 ヤマダ タロウ</small>
-    </label><br />
-    <input type="text" id="fullName" name="fullName" required /><br /><br />
+<div id="form-page" class="page active">
+  <h2 class="page-title">お客様情報登録フォーム</h2>
+  <form id="customer-form">
+    <label for="firstName">氏名</label>
+    <input type="text" id="firstName" name="firstName" placeholder="山田 太郎" required />
 
-    <label for="phone">
-      電話番号: <small>例 090-1234-5678</small>
-    </label><br />
-    <input type="tel" id="phone" name="phone" pattern="[0-9\-]+" required /><br /><br />
+    <label for="fullName">フルネーム</label>
+    <input type="text" id="fullName" name="fullName" placeholder="ヤマダ タロウ" required />
 
-    <!-- userid用のhiddenフィールド -->
-    <input type="hidden" id="userid" name="userid" value="" />
+    <label for="phone">電話番号</label>
+    <input type="tel" id="phone" name="phone" pattern="[0-9\-]+" placeholder="090-1234-5678" required />
+
+    <input type="hidden" id="userId" name="userId" value="" />
 
     <button type="submit">送信</button>
   </form>
+  <div id="error-message">送信できませんでした。もう一度お試しください。</div>
+</div>
 
-  <script>
-    window.onload = function() {
-      const params = new URLSearchParams(window.location.search);
-      const userid = params.get("userid");
-      if (userid) {
-        document.getElementById("userid").value = userid;
-      }
-    };
-  </script>
+<div id="completion-page">
+  登録が完了しました！<br>ご予約の方はメニューボタンから「予約する」を選択してください。
+</div>
+
+<script>
+const webhookURL = "https://hook.eu2.make.com/8anawrwfconzdpic5voda2vcjg2ayjhi";
+
+// URLパラメータからuserIdを取得
+window.onload = function() {
+  const params = new URLSearchParams(window.location.search);
+  const userId = params.get("userId");
+  if (userId) {
+    document.getElementById("userId").value = userId;
+  }
+};
+
+const form = document.getElementById("customer-form");
+const errorMessage = document.getElementById("error-message");
+const formPage = document.getElementById("form-page");
+const completionPage = document.getElementById("completion-page");
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  errorMessage.style.display = "none";
+
+  const formData = new FormData(form);
+  const params = new URLSearchParams({
+    userId: formData.get("userId"),
+    firstName: formData.get("firstName"),
+    fullName: formData.get("fullName"),
+    phone: formData.get("phone")
+  });
+
+  try {
+    // URLパラメータ付きGETリクエストで送信
+    await fetch(`${webhookURL}?${params.toString()}`, {
+      method: "GET"
+    });
+  } catch(err) {
+    console.error("送信エラー:", err);
+    // エラーが出てもユーザーには表示せず完了画面に進む
+  }
+
+  // 0.5秒後に完了画面表示
+  setTimeout(() => {
+    formPage.classList.remove("active");
+    completionPage.style.height = window.innerHeight + "px";
+    completionPage.style.display = "flex";
+  }, 500);
+});
+</script>
+
 </body>
 </html>

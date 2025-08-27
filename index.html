@@ -62,7 +62,7 @@
     <label for="phone">電話番号</label>
     <input type="tel" id="phone" name="phone" pattern="[0-9\-]+" placeholder="090-1234-5678" required />
 
-    <input type="hidden" id="userid" name="userid" value="" />
+    <input type="hidden" id="userId" name="userId" value="" />
 
     <button type="submit">送信</button>
   </form>
@@ -76,12 +76,12 @@
 <script>
 const webhookURL = "https://hook.eu2.make.com/8anawrwfconzdpic5voda2vcjg2ayjhi";
 
-// URLパラメータからuseridを取得
+// URLパラメータからuserIdを取得
 window.onload = function() {
   const params = new URLSearchParams(window.location.search);
-  const userid = params.get("userid");
-  if (userid) {
-    document.getElementById("userid").value = userid;
+  const userId = params.get("userId");
+  if (userId) {
+    document.getElementById("userId").value = userId;
   }
 };
 
@@ -96,7 +96,7 @@ form.addEventListener("submit", async (e) => {
 
   const formData = new FormData(form);
   const data = {
-    userId: formData.get("userid"),
+    userId: formData.get("userId"),
     firstName: formData.get("firstName"),
     fullName: formData.get("fullName"),
     phone: formData.get("phone")

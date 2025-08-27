@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>お客様情報登録フォーム</title>
 <style>
   body {
@@ -45,13 +45,14 @@
     padding: 20px;
     box-sizing: border-box;
   }
+  #error-message { display: none; color: #dc2626; text-align: center; margin-top: 20px; font-weight: bold; }
 </style>
 </head>
 <body>
 
 <div id="form-page" class="page active">
   <h2 class="page-title">お客様情報登録フォーム</h2>
-  <form id="customer-form" action="https://hook.eu2.make.com/8anawrwfconzdpic5voda2vcjg2ayjhi" target="hidden-iframe">
+  <form id="customer-form">
     <label for="firstName">氏名</label>
     <input type="text" id="firstName" name="firstName" placeholder="山田 太郎" required />
 
@@ -65,21 +66,17 @@
 
     <button type="submit">送信</button>
   </form>
+  <div id="error-message">送信できませんでした。もう一度お試しください。</div>
 </div>
 
 <div id="completion-page">
   登録が完了しました！<br>ご予約の方はメニューボタンから「予約する」を選択してください。
 </div>
 
-<!-- 送信専用の隠しiframe -->
-<iframe name="hidden-iframe" style="display:none;"></iframe>
-
 <script>
-const form = document.getElementById("customer-form");
-const formPage = document.getElementById("form-page");
-const completionPage = document.getElementById("completion-page");
+const webhookURL = "https://hook.eu2.make.com/8anawrwfconzdpic5voda2vcjg2ayjhi";
 
-// URLパラメータからuserIdを取得してhiddenにセット
+// URLパラメータからuserIdを取得
 window.onload = function() {
   const params = new URLSearchParams(window.location.search);
   const userId = params.get("userId");
@@ -88,13 +85,39 @@ window.onload = function() {
   }
 };
 
-// フォーム送信後に完了画面を表示
-form.addEventListener("submit", function(e){
-  setTimeout(() => {
-    formPage.classList.remove("active");
-    completionPage.style.height = window.innerHeight + "px";
-    completionPage.style.display = "flex";
-  }, 300);
+const form = document.getElementById("customer-form");
+const errorMessage = document.getElementById("error-message");
+const formPage = document.getElementById("form-page");
+const completionPage = document.getElementById("completion-page");
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  errorMessage.style.display = "none";
+
+  const formData = new FormData(form);
+  const data = {
+    userId: formData.get("userId"),
+    firstName: formData.get("firstName"),
+    fullName: formData.get("fullName"),
+    phone: formData.get("phone")
+  };
+
+  try {
+    await fetch(webhookURL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+  } catch(err) {
+    console.error("送信エラー:", err);
+    errorMessage.style.display = "block";
+    return;
+  }
+
+  // 完了画面に切り替え
+  formPage.classList.remove("active");
+  completionPage.style.height = window.innerHeight + "px";
+  completionPage.style.display = "flex";
 });
 </script>
 

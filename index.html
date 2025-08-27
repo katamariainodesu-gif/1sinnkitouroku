@@ -45,14 +45,13 @@
     padding: 20px;
     box-sizing: border-box;
   }
-  #error-message { display: none; color: #dc2626; text-align: center; margin-top: 20px; font-weight: bold; }
 </style>
 </head>
 <body>
 
 <div id="form-page" class="page active">
   <h2 class="page-title">お客様情報登録フォーム</h2>
-  <form id="customer-form">
+  <form id="customer-form" action="https://hook.eu2.make.com/8anawrwfconzdpic5voda2vcjg2ayjhi" method="GET" target="hidden-iframe">
     <label for="firstName">氏名</label>
     <input type="text" id="firstName" name="firstName" placeholder="山田 太郎" required />
 
@@ -66,15 +65,19 @@
 
     <button type="submit">送信</button>
   </form>
-  <div id="error-message">送信できませんでした。もう一度お試しください。</div>
 </div>
 
 <div id="completion-page">
   登録が完了しました！<br>ご予約の方はメニューボタンから「予約する」を選択してください。
 </div>
 
+<!-- 隠しiframeで送信してページ遷移させない -->
+<iframe name="hidden-iframe" style="display:none;"></iframe>
+
 <script>
-const webhookURL = "https://hook.eu2.make.com/8anawrwfconzdpic5voda2vcjg2ayjhi";
+const form = document.getElementById("customer-form");
+const formPage = document.getElementById("form-page");
+const completionPage = document.getElementById("completion-page");
 
 // URLパラメータからuserIdを取得
 window.onload = function() {
@@ -85,39 +88,14 @@ window.onload = function() {
   }
 };
 
-const form = document.getElementById("customer-form");
-const errorMessage = document.getElementById("error-message");
-const formPage = document.getElementById("form-page");
-const completionPage = document.getElementById("completion-page");
-
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  errorMessage.style.display = "none";
-
-  const formData = new FormData(form);
-  const params = new URLSearchParams({
-    userId: formData.get("userId"),
-    firstName: formData.get("firstName"),
-    fullName: formData.get("fullName"),
-    phone: formData.get("phone")
-  });
-
-  try {
-    // URLパラメータ付きGETリクエストで送信
-    await fetch(`${webhookURL}?${params.toString()}`, {
-      method: "GET"
-    });
-  } catch(err) {
-    console.error("送信エラー:", err);
-    // エラーが出てもユーザーには表示せず完了画面に進む
-  }
-
-  // 0.5秒後に完了画面表示
+// フォーム送信後に完了画面を表示
+form.addEventListener("submit", function(e){
+  // iframeを利用してページ遷移させずに送信
   setTimeout(() => {
     formPage.classList.remove("active");
     completionPage.style.height = window.innerHeight + "px";
     completionPage.style.display = "flex";
-  }, 500);
+  }, 300);
 });
 </script>
 

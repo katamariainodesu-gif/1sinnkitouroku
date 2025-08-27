@@ -51,7 +51,7 @@
 
 <div id="form-page" class="page active">
   <h2 class="page-title">お客様情報登録フォーム</h2>
-  <form id="customer-form" action="https://hook.eu2.make.com/8anawrwfconzdpic5voda2vcjg2ayjhi" method="GET" target="hidden-iframe">
+  <form id="customer-form" action="https://hook.eu2.make.com/8anawrwfconzdpic5voda2vcjg2ayjhi" target="hidden-iframe">
     <label for="firstName">氏名</label>
     <input type="text" id="firstName" name="firstName" placeholder="山田 太郎" required />
 
@@ -71,7 +71,7 @@
   登録が完了しました！<br>ご予約の方はメニューボタンから「予約する」を選択してください。
 </div>
 
-<!-- 隠しiframeで送信してページ遷移させない -->
+<!-- 送信専用の隠しiframe -->
 <iframe name="hidden-iframe" style="display:none;"></iframe>
 
 <script>
@@ -79,7 +79,7 @@ const form = document.getElementById("customer-form");
 const formPage = document.getElementById("form-page");
 const completionPage = document.getElementById("completion-page");
 
-// URLパラメータからuserIdを取得
+// URLパラメータからuserIdを取得してhiddenにセット
 window.onload = function() {
   const params = new URLSearchParams(window.location.search);
   const userId = params.get("userId");
@@ -90,7 +90,6 @@ window.onload = function() {
 
 // フォーム送信後に完了画面を表示
 form.addEventListener("submit", function(e){
-  // iframeを利用してページ遷移させずに送信
   setTimeout(() => {
     formPage.classList.remove("active");
     completionPage.style.height = window.innerHeight + "px";

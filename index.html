@@ -1,150 +1,127 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>お客様情報登録フォーム</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 20px;
-      font-family: sans-serif;
-      background-color: #f9f9f9;
-    }
-
-    .page {
-      display: none;
-    }
-
-    .active {
-      display: block;
-    }
-
-    form {
-      max-width: 400px;
-      margin: 0 auto;
-      padding: 20px;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      background: #fff;
-    }
-
-    input,
-    button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      font-size: 16px;
-      box-sizing: border-box;
-    }
-
-    .page-title {
-      text-align: center;
-      margin-top: 20px;
-      font-size: 24px;
-      color: #0f172a;
-    }
-
-    /* 完了画面 */
-    #completion-page {
-      display: none;
-      height: 100vh;
-      background-color: #f9f9f9;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      font-size: 24px;
-      color: #16a34a;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-
-    /* エラー表示 */
-    #error-message {
-      display: none;
-      color: #dc2626;
-      text-align: center;
-      margin-top: 20px;
-      font-weight: bold;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>お客様情報登録フォーム</title>
+<style>
+  body {
+    margin: 0;
+    padding: 20px;
+    font-family: sans-serif;
+    background-color: #f9f9f9;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .page { display: none; }
+  .active { display: block; }
+  form {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background: #fff;
+  }
+  input, button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    font-size: 16px;
+    box-sizing: border-box;
+  }
+  .page-title { text-align: center; margin-top: 20px; font-size: 24px; color: #0f172a; }
+  #completion-page {
+    display: none;
+    height: 100vh;
+    background-color: #f9f9f9;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 24px;
+    color: #16a34a;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  #error-message { display: none; color: #dc2626; text-align: center; margin-top: 20px; font-weight: bold; }
+</style>
 </head>
-
 <body>
-  <!-- フォームページ -->
-  <div id="form-page" class="page active">
-    <h2 class="page-title">お客様情報登録フォーム</h2>
-    <form id="customer-form">
-      <label for="firstName">氏名</label><br />
-      <input type="text" id="firstName" name="firstName" placeholder="山田　太郎" required /><br /><br />
 
-      <label for="fullName">フルネーム</label><br />
-      <input type="text" id="fullName" name="fullName" placeholder="ヤマダ　タロウ" required /><br /><br />
+<div id="form-page" class="page active">
+  <h2 class="page-title">お客様情報登録フォーム</h2>
+  <form id="customer-form">
+    <label for="firstName">氏名</label>
+    <input type="text" id="firstName" name="firstName" placeholder="山田 太郎" required />
 
-      <label for="phone">電話番号</label><br />
-      <input type="tel" id="phone" name="phone" pattern="[0-9\-]+" placeholder="090-1234-5678" required /><br /><br />
+    <label for="fullName">フルネーム</label>
+    <input type="text" id="fullName" name="fullName" placeholder="ヤマダ タロウ" required />
 
-      <!-- userid用のhiddenフィールド -->
-      <input type="hidden" id="userid" name="userid" value="" />
+    <label for="phone">電話番号</label>
+    <input type="tel" id="phone" name="phone" pattern="[0-9\-]+" placeholder="090-1234-5678" required />
 
-      <button type="submit">送信</button>
-    </form>
-    <div id="error-message">送信できませんでした。もう一度お試しください。</div>
-  </div>
+    <input type="hidden" id="userid" name="userid" value="" />
 
-  <!-- 完了画面 -->
-  <div id="completion-page">
-    登録が完了しました！<br>ご予約の方はメニューボタンから<br>「予約する」を選択してください。
-  </div>
+    <button type="submit">送信</button>
+  </form>
+  <div id="error-message">送信できませんでした。もう一度お試しください。</div>
+</div>
 
-  <script>
-    const webhookURL = "https://hook.eu2.make.com/8anawrwfconzdpic5voda2vcjg2ayjhi";
+<div id="completion-page">
+  登録が完了しました！<br>ご予約の方はメニューボタンから「予約する」を選択してください。
+</div>
 
-    // URLパラメータからuseridをセット
-    window.onload = function () {
-      const params = new URLSearchParams(window.location.search);
-      const userid = params.get("userid");
-      if (userid) {
-        document.getElementById("userid").value = userid;
-      }
-    };
+<script>
+const webhookURL = "https://hook.eu2.make.com/8anawrwfconzdpic5voda2vcjg2ayjhi";
 
-    const form = document.getElementById("customer-form");
-    const errorMessage = document.getElementById("error-message");
-    const formPage = document.getElementById("form-page");
-    const completionPage = document.getElementById("completion-page");
+// URLパラメータからuseridを取得
+window.onload = function() {
+  const params = new URLSearchParams(window.location.search);
+  const userid = params.get("userid");
+  if (userid) {
+    document.getElementById("userid").value = userid;
+  }
+};
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      errorMessage.style.display = "none"; // 送信前にエラー非表示
+const form = document.getElementById("customer-form");
+const errorMessage = document.getElementById("error-message");
+const formPage = document.getElementById("form-page");
+const completionPage = document.getElementById("completion-page");
 
-      const formData = new FormData(form);
-      const data = Object.fromEntries(formData.entries());
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  errorMessage.style.display = "none";
 
-      try {
-        const res = await fetch(webhookURL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        });
+  const formData = new FormData(form);
+  const data = {
+    userId: formData.get("userid"),
+    firstName: formData.get("firstName"),
+    fullName: formData.get("fullName"),
+    phone: formData.get("phone")
+  };
 
-        if (!res.ok) throw new Error("送信失敗");
-
-        // 少し待ってから完了画面を表示
-        setTimeout(() => {
-          formPage.classList.remove("active");
-          completionPage.style.height = window.innerHeight + "px";
-          completionPage.style.display = "flex";
-        }, 500);
-
-      } catch (err) {
-        console.error("送信エラー:", err);
-        // 失敗時はエラー表示して再入力
-        errorMessage.style.display = "block";
-      }
+  try {
+    // 送信結果は無視して完了画面へ
+    await fetch(webhookURL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
     });
-  </script>
+  } catch(err) {
+    console.error("送信エラー:", err);
+    // エラーが出てもユーザーには表示せず完了画面に進む
+  }
+
+  // 0.5秒後に完了画面表示
+  setTimeout(() => {
+    formPage.classList.remove("active");
+    completionPage.style.height = window.innerHeight + "px";
+    completionPage.style.display = "flex";
+  }, 500);
+});
+</script>
+
 </body>
 </html>

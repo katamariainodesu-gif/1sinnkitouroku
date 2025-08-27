@@ -5,72 +5,146 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>お客様情報登録フォーム</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: sans-serif;
+      background-color: #f9f9f9;
+    }
 
-	<!-- 以下CSS -->
-	<style>
-	body {
-	  margin: 0;           /* ページ全体の余白をリセット */
-	  padding: 20px;       /* ページ全体に20pxの余白 */
-	  font-family: sans-serif; /* 全体の文字フォント */
-	}
-	
-	form {
-	  max-width: 400px;    /* フォームの横幅の上限を400pxにする */
-	  margin: 0 auto;      /* 左右の余白を自動にして中央寄せ */
-	  padding: 20px;       /* フォーム内の余白 */
-	  border: 1px solid #ddd; /* 薄い枠線 */
-	  border-radius: 10px; /* 角を丸く */
-	  background: #fff;    /* 背景を白 */
-	}
-	
-	input, button {
-	  width: 100%;         /* 横幅を親要素いっぱいに広げる */
-	  padding: 10px;       /* 内側の余白 */
-	  margin-top: 10px;    /* 上に10pxの余白 */
-	  font-size: 16px;     /* 文字の大きさ */
-       	  box-sizing: border-box; /* パディング込みで幅100%に収める */
-	}
+    .page {
+      display: none;
+    }
 
-	 .page-title {
-	 text-align: center;  /* 中央寄せ */
-         margin-top: 20px;    /* 上余白 */
-         font-size: 24px;     /* 文字サイズ */
-        }
-	
-	</style>
+    .active {
+      display: block;
+    }
+
+    form {
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      background: #fff;
+    }
+
+    input,
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    .page-title {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 24px;
+      color: #0f172a;
+    }
+
+    /* 完了画面 */
+    #completion-page {
+      display: none;
+      height: 100vh;
+      background-color: #f9f9f9;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      font-size: 24px;
+      color: #16a34a;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    /* エラー表示 */
+    #error-message {
+      display: none;
+      color: #dc2626;
+      text-align: center;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
 </head>
+
 <body>
-  <h2 class="page-title">お客様情報登録フォーム</h2>
-  <form action="https://hook.eu2.make.com/g0jzzvagjl1e7cefpn0er1gahsc1pwjo" method="POST">
-    <label for="firstName">
-      氏名
-    </label><br />
-    <input type="text" id="firstName" name="firstName" placeholder="山田　太郎" required /><br /><br />
+  <!-- フォームページ -->
+  <div id="form-page" class="page active">
+    <h2 class="page-title">お客様情報登録フォーム</h2>
+    <form id="customer-form">
+      <label for="firstName">氏名</label><br />
+      <input type="text" id="firstName" name="firstName" placeholder="山田　太郎" required /><br /><br />
 
-    <label for="fullName">
-      フルネーム
-    </label><br />
-    <input type="text" id="fullName" name="fullName" placeholder="ヤマダ　タロウ"　required /><br /><br />
+      <label for="fullName">フルネーム</label><br />
+      <input type="text" id="fullName" name="fullName" placeholder="ヤマダ　タロウ" required /><br /><br />
 
-    <label for="phone">
-      電話番号
-    </label><br />
-    <input type="tel" id="phone" name="phone" pattern="[0-9\-]+" placeholder="090-1234-5678" required /><br /><br />
+      <label for="phone">電話番号</label><br />
+      <input type="tel" id="phone" name="phone" pattern="[0-9\-]+" placeholder="090-1234-5678" required /><br /><br />
 
-    <!-- userid用のhiddenフィールド -->
-    <input type="hidden" id="userid" name="userid" value="" />
+      <!-- userid用のhiddenフィールド -->
+      <input type="hidden" id="userid" name="userid" value="" />
 
-    <button type="submit">送信</button>
-  </form>
+      <button type="submit">送信</button>
+    </form>
+    <div id="error-message">送信できませんでした。もう一度お試しください。</div>
+  </div>
+
+  <!-- 完了画面 -->
+  <div id="completion-page">
+    登録が完了しました！<br>ご予約の方はメニューボタンから<br>「予約する」を選択してください。
+  </div>
 
   <script>
-    window.onload = function() {
+    const webhookURL = "https://hook.eu2.make.com/g0jzzvagjl1e7cefpn0er1gahsc1pwjo";
+
+    // URLパラメータからuseridをセット
+    window.onload = function () {
       const params = new URLSearchParams(window.location.search);
       const userid = params.get("userid");
       if (userid) {
         document.getElementById("userid").value = userid;
       }
     };
+
+    const form = document.getElementById("customer-form");
+    const errorMessage = document.getElementById("error-message");
+    const formPage = document.getElementById("form-page");
+    const completionPage = document.getElementById("completion-page");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      errorMessage.style.display = "none"; // 送信前にエラー非表示
+
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+
+      try {
+        const res = await fetch(webhookURL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+
+        if (!res.ok) throw new Error("送信失敗");
+
+        // 少し待ってから完了画面を表示
+        setTimeout(() => {
+          formPage.classList.remove("active");
+          completionPage.style.height = window.innerHeight + "px";
+          completionPage.style.display = "flex";
+        }, 500);
+
+      } catch (err) {
+        console.error("送信エラー:", err);
+        // 失敗時はエラー表示して再入力
+        errorMessage.style.display = "block";
+      }
+    });
   </script>
 </body>
 </html>
